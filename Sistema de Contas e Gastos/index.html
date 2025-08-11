@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Contas e Gastos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-blue-800">📊 Sistema de Contas e Gastos</h1>
+            <p class="text-gray-600">Gerencie os gastos dos seus clientes de forma eficiente</p>
+        </header>
+
+        <div class="grid-container">
+            <!-- Seção de Formulário -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4 text-blue-700 border-b pb-2">
+                    <i class="fas fa-plus-circle mr-2"></i>Nova Conta
+                </h2>
+                <form id="accountForm" class="space-y-4">
+                    <div>
+                        <label for="clientName" class="block text-sm font-medium text-gray-700">Nome do Cliente</label>
+                        <input type="text" id="clientName" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                    </div>
+                    
+                    <div>
+                        <label for="service" class="block text-sm font-medium text-gray-700">Serviço</label>
+                        <input type="text" id="service" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                    </div>
+                    
+                    <div>
+                        <label for="dueDate" class="block text-sm font-medium text-gray-700">Data de Prazo</label>
+                        <input type="date" id="dueDate" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                    </div>
+                    
+                    <div>
+                        <label for="targetValue" class="block text-sm font-medium text-gray-700">Valor Alvo (R$)</label>
+                        <input type="number" step="0.01" id="targetValue" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                    </div>
+                    
+                    <button type="submit" 
+                            class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">
+                        <i class="fas fa-save mr-2"></i>Salvar Conta
+                    </button>
+                </form>
+                
+                <!-- Formulário de Gasto -->
+                <h2 class="text-xl font-semibold mt-8 mb-4 text-blue-700 border-b pb-2">
+                    <i class="fas fa-money-bill-wave mr-2"></i>Adicionar Gasto
+                </h2>
+                <form id="expenseForm" class="space-y-4">
+                    <div>
+                        <label for="clientSelect" class="block text-sm font-medium text-gray-700">Cliente</label>
+                        <select id="clientSelect" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                            <option value="">Selecione um cliente</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="expenseDescription" class="block text-sm font-medium text-gray-700">Descrição do Gasto</label>
+                        <input type="text" id="expenseDescription" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                    </div>
+                    
+                    <div>
+                        <label for="expenseValue" class="block text-sm font-medium text-gray-700">Valor (R$)</label>
+                        <input type="number" step="0.01" id="expenseValue" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                    </div>
+                    
+                    <button type="submit" 
+                            class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300">
+                        <i class="fas fa-plus-circle mr-2"></i>Adicionar Gasto
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Dashboard -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-6 text-blue-700 border-b pb-2">
+                    <i class="fas fa-chart-line mr-2"></i>Dashboard Financeiro
+                </h2>
+                
+                <!-- Filtros -->
+                <div class="mb-6 bg-gray-100 p-4 rounded-lg">
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex-1">
+                            <label for="filterClient" class="block text-sm font-medium text-gray-700">Filtrar por Cliente</label>
+                            <select id="filterClient" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <option value="">Todos os Clientes</option>
+                            </select>
+                        </div>
+                        <div class="flex-1">
+                            <label for="filterService" class="block text-sm font-medium text-gray-700">Filtrar por Serviço</label>
+                            <select id="filterService" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <option value="">Todos os Serviços</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lista de Contas -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold mb-3 text-blue-800">Contas Cadastradas</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serviço</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prazo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Alvo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gastos</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Saldo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accountsTable" class="bg-white divide-y divide-gray-200">
+                                <!-- Dados serão inseridos aqui via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Resumo Financeiro -->
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-3 text-blue-800">Resumo Financeiro</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-blue-100">
+                            <h4 class="text-sm font-medium text-gray-500">Total Valor Alvo</h4>
+                            <p id="totalTarget" class="text-2xl font-semibold text-blue-600">R$ 0,00</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-blue-100">
+                            <h4 class="text-sm font-medium text-gray-500">Total Gastos</h4>
+                            <p id="totalExpenses" class="text-2xl font-semibold text-red-600">R$ 0,00</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-blue-100">
+                            <h4 class="text-sm font-medium text-gray-500">Saldo Total</h4>
+                            <p id="totalBalance" class="text-2xl font-semibold text-green-600">R$ 0,00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Banco de dados local (simulado)
+        let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+        let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+        
+        // Elementos do DOM
+        const accountForm = document.getElementById('accountForm');
+        const expenseForm = document.getElementById('expenseForm');
+        const accountsTable = document.getElementById('accountsTable');
+        const clientSelect = document.getElementById('clientSelect');
+        const filterClient = document.getElementById('filterClient');
+        const filterService = document.getElementById('filterService');
+        const totalTarget = document.getElementById('totalTarget');
+        const totalExpenses = document.getElementById('totalExpenses');
+        const totalBalance = document.getElementById('totalBalance');
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAccounts();
+            updateClientSelects();
+            updateSummary();
+        });
+        
+        // Cadastrar nova conta
+        accountForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const clientName = document.getElementById('clientName').value;
+            const service = document.getElementById('service').value;
+            const dueDate = document.getElementById('dueDate').value;
+            const targetValue = parseFloat(document.getElementById('targetValue').value);
+            
+            if (!clientName || !service || !dueDate || isNaN(targetValue)) {
+                alert('Por favor, preencha todos os campos corretamente!');
+                return;
+            }
+            
+            const newAccount = {
+                id: Date.now(),
+                clientName,
+                service,
+                dueDate,
+                targetValue
+            };
+            
+            accounts.push(newAccount);
+            saveToLocalStorage();
+            renderAccounts();
+            updateClientSelects();
+            updateSummary();
+            
+            accountForm.reset();
+            
+            alert('Conta cadastrada com sucesso!');
+        });
+        
+        // Adicionar gasto
+        expenseForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const clientId = parseInt(clientSelect.value);
+            const description = document.getElementById('expenseDescription').value;
+            const value = parseFloat(document.getElementById('expenseValue').value);
+            
+            if (!clientId || !description || isNaN(value)) {
+                alert('Por favor, preencha todos os campos corretamente!');
+                return;
+            }
+            
+            const newExpense = {
+                id: Date.now(),
+                accountId: clientId,
+                description,
+                value,
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            expenses.push(newExpense);
+            saveToLocalStorage();
+            renderAccounts();
+            updateSummary();
+            
+            expenseForm.reset();
+            
+            alert('Gasto registrado com sucesso!');
+        });
+        
+        // Filtrar contas
+        filterClient.addEventListener('change', renderAccounts);
+        filterService.addEventListener('change', renderAccounts);
+        
+        // Funções auxiliares
+        function renderAccounts() {
+            const filteredClient = filterClient.value;
+            const filteredService = filterService.value;
+            
+            let filteredAccounts = accounts;
+            
+            if (filteredClient) {
+                filteredAccounts = filteredAccounts.filter(account => 
+                    account.id.toString() === filteredClient
+                );
+            }
+            
+            if (filteredService) {
+                filteredAccounts = filteredAccounts.filter(account => 
+                    account.service.toLowerCase().includes(filteredService.toLowerCase())
+                );
+            }
+            
+            accountsTable.innerHTML = '';
+            
+            if (filteredAccounts.length === 0) {
+                accountsTable.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-gray-500">
+                            Nenhuma conta encontrada com os filtros selecionados
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            filteredAccounts.forEach(account => {
+                const accountExpenses = expenses.filter(expense => expense.accountId === account.id);
+                const totalExpensesValue = accountExpenses.reduce((sum, expense) => sum + expense.value, 0);
+                const balance = account.targetValue - totalExpensesValue;
+                
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="font-medium text-gray-900">${account.clientName}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-gray-700">${account.service}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-gray-700">${new Date(account.dueDate).toLocaleDateString('pt-BR')}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-blue-600 font-medium">R$ ${account.targetValue.toFixed(2).replace('.', ',')}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-red-600 font-medium">R$ ${totalExpensesValue.toFixed(2).replace('.', ',')}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="${balance >= 0 ? 'text-green-600' : 'text-red-600'} font-medium">
+                            R$ ${Math.abs(balance).toFixed(2).replace('.', ',')}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <button onclick="deleteAccount(${account.id})" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                
+                accountsTable.appendChild(row);
+            });
+        }
+        
+        function updateClientSelects() {
+            clientSelect.innerHTML = '<option value="">Selecione um cliente</option>';
+            filterClient.innerHTML = '<option value="">Todos os Clientes</option>';
+            filterService.innerHTML = '<option value="">Todos os Serviços</option>';
+            
+            const uniqueServices = [...new Set(accounts.map(account => account.service))];
+            
+            accounts.forEach(account => {
+                const clientsOption = document.createElement('option');
+                clientsOption.value = account.id;
+                clientsOption.textContent = `${account.clientName} (${account.service})`;
+                clientSelect.appendChild(clientsOption);
+                
+                const filterClientOption = document.createElement('option');
+                filterClientOption.value = account.id;
+                filterClientOption.textContent = `${account.clientName}`;
+                filterClient.appendChild(filterClientOption);
+            });
+            
+            uniqueServices.forEach(service => {
+                const filterServiceOption = document.createElement('option');
+                filterServiceOption.value = service;
+                filterServiceOption.textContent = service;
+                filterService.appendChild(filterServiceOption);
+            });
+        }
+        
+        function updateSummary() {
+            const totalTargetValue = accounts.reduce((sum, account) => sum + account.targetValue, 0);
+            const totalExpensesValue = expenses.reduce((sum, expense) => sum + expense.value, 0);
+            const totalBalanceValue = totalTargetValue - totalExpensesValue;
+            
+            totalTarget.textContent = `R$ ${totalTargetValue.toFixed(2).replace('.', ',')}`;
+            totalExpenses.textContent = `R$ ${totalExpensesValue.toFixed(2).replace('.', ',')}`;
+            totalBalance.textContent = `R$ ${totalBalanceValue.toFixed(2).replace('.', ',')}`;
+            
+            totalBalance.className = `text-2xl font-semibold ${totalBalanceValue >= 0 ? 'text-green-600' : 'text-red-600'}`;
+        }
+        
+        function deleteAccount(accountId) {
+            if (confirm('Tem certeza que deseja excluir esta conta? Todos os gastos associados também serão removidos.')) {
+                accounts = accounts.filter(account => account.id !== accountId);
+                expenses = expenses.filter(expense => expense.accountId !== accountId);
+                saveToLocalStorage();
+                renderAccounts();
+                updateClientSelects();
+                updateSummary();
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+        }
+
+        /** 
+         * PARA INTEGRAR COM UMA PLANILHA REAL (Google Sheets, Excel, etc.) via API:
+         * 
+         * 1. Substitua as funções de localStorage por chamadas à sua API:
+         *    - Implemente endpoints para GET/POST contas e gastos
+         *    - Use fetch() ou axios para fazer as requisições
+         * 
+         * 2. Opções de APIs para integração:
+         *    - Google Sheets API: Permite ler/escrever em planilhas do Google
+         *    - Microsoft Graph API: Para integração com Excel Online/SharePoint
+         *    - API personalizada com Node.js/Express conectando a um banco de dados
+         * 
+         * 3. Exemplo básico de chamada API:
+         * 
+         * async function getAccounts() {
+         *     try {
+         *         const response = await fetch('https://sua-api.com/accounts');
+         *         accounts = await response.json();
+         *         renderAccounts();
+         *     } catch (error) {
+         *         console.error('Erro ao buscar contas:', error);
+         *     }
+         * }
+         * 
+         * 4. Para popular a planilha automaticamente:
+         *    - Configure um webhook ou sistema de sincronização periódica
+         *    - Ou crie um botão "Exportar para Planilha" que chame a API
+         */
+    </script>
+</body>
+</html>
