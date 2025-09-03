@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serralheria - Gerenciamento de Rendas</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-tools"></i> Serralheria - Gerenciamento de Rendas</h1>
+                <nav class="nav">
+                    <button class="nav-btn active" data-section="dashboard">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </button>
+                    <button class="nav-btn" data-section="clientes">
+                        <i class="fas fa-users"></i> Clientes
+                    </button>
+                    <button class="nav-btn" data-section="servicos">
+                        <i class="fas fa-cogs"></i> Serviços
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-line"></i> Dashboard</h2>
+                </div>
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total de Clientes</h3>
+                            <p class="card-number" id="total-clientes">0</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total de Serviços</h3>
+                            <p class="card-number" id="total-servicos">0</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Receita Total</h3>
+                            <p class="card-number" id="receita-total">R$ 0,00</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Serviços Pendentes</h3>
+                            <p class="card-number" id="servicos-pendentes">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="recent-services">
+                    <h3>Serviços Recentes</h3>
+                    <div class="table-container">
+                        <table id="recent-services-table">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Descrição</th>
+                                    <th>Valor</th>
+                                    <th>Data</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Clientes Section -->
+            <section id="clientes" class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-users"></i> Gerenciar Clientes</h2>
+                    <button class="btn btn-primary" onclick="abrirModalCliente()">
+                        <i class="fas fa-plus"></i> Novo Cliente
+                    </button>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="search-clientes" placeholder="Buscar clientes..." class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="table-container">
+                    <table id="clientes-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Telefone</th>
+                                <th>Email</th>
+                                <th>Endereço</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Serviços Section -->
+            <section id="servicos" class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-cogs"></i> Gerenciar Serviços</h2>
+                    <button class="btn btn-primary" onclick="abrirModalServico()">
+                        <i class="fas fa-plus"></i> Novo Serviço
+                    </button>
+                </div>
+                <div class="filters-container">
+                    <select id="filter-cliente" class="filter-select">
+                        <option value="">Todos os clientes</option>
+                    </select>
+                    <select id="filter-status" class="filter-select">
+                        <option value="">Todos os status</option>
+                        <option value="Pendente">Pendente</option>
+                        <option value="Em andamento">Em andamento</option>
+                        <option value="Concluído">Concluído</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table id="servicos-table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Cliente -->
+    <div id="modal-cliente" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-cliente-title">Novo Cliente</h3>
+                <span class="close" onclick="fecharModalCliente()">&times;</span>
+            </div>
+            <form id="form-cliente">
+                <input type="hidden" id="cliente-id">
+                <div class="form-group">
+                    <label for="cliente-nome">Nome *</label>
+                    <input type="text" id="cliente-nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="cliente-telefone">Telefone</label>
+                    <input type="tel" id="cliente-telefone">
+                </div>
+                <div class="form-group">
+                    <label for="cliente-email">Email</label>
+                    <input type="email" id="cliente-email">
+                </div>
+                <div class="form-group">
+                    <label for="cliente-endereco">Endereço</label>
+                    <textarea id="cliente-endereco" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModalCliente()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Serviço -->
+    <div id="modal-servico" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-servico-title">Novo Serviço</h3>
+                <span class="close" onclick="fecharModalServico()">&times;</span>
+            </div>
+            <form id="form-servico">
+                <input type="hidden" id="servico-id">
+                <div class="form-group">
+                    <label for="servico-cliente">Cliente *</label>
+                    <select id="servico-cliente" required>
+                        <option value="">Selecione um cliente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="servico-descricao">Descrição *</label>
+                    <textarea id="servico-descricao" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="servico-valor">Valor *</label>
+                    <input type="number" id="servico-valor" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="servico-data">Data do Serviço *</label>
+                    <input type="date" id="servico-data" required>
+                </div>
+                <div class="form-group">
+                    <label for="servico-status">Status</label>
+                    <select id="servico-status">
+                        <option value="Pendente">Pendente</option>
+                        <option value="Em andamento">Em andamento</option>
+                        <option value="Concluído">Concluído</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="servico-observacoes">Observações</label>
+                    <textarea id="servico-observacoes" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModalServico()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
+
